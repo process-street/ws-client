@@ -64,15 +64,18 @@ inThisBuild(
   playJsonVersion := {
     scalaVersion.value match {
       case "2.12.18" => "2.8.2"
-      case "2.13.11" => "2.8.2" // 2.10.0
+      case "2.13.11" => "3.0.4"
       case "3.2.2"   => "2.10.0-RC6" // -RC6
-      case _         => "2.8.2"
+      case _         => "3.0.4"
     }
   }
 )
 
-// Akka
-lazy val akkaStreamLibs = Def.setting {
+// Pekko (migrated from Akka for Play 3.0 compatibility)
+val pekkoVersion = "1.1.5"
+val pekkoHttpVersion = "1.1.0"
+
+lazy val pekkoStreamLibs = Def.setting {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, 12)) =>
       Seq(
@@ -80,14 +83,11 @@ lazy val akkaStreamLibs = Def.setting {
       )
     case Some((2, 13)) =>
       Seq(
-        "com.typesafe.akka" %% "akka-stream" % "2.6.20" exclude("com.typesafe.play", "play-json")
+        "org.apache.pekko" %% "pekko-stream" % pekkoVersion
       )
     case Some((3, 2)) =>
-      // because of the conflicting cross-version suffixes 2.13 vs 3
       Seq(
-//        "com.typesafe.akka" %% "akka-stream" % "2.6.20"
-        "com.typesafe.akka" % "akka-stream_2.13" % "2.6.20" exclude ("com.typesafe", "ssl-config-core_2.13") exclude("com.typesafe.play", "play-json"),
-        "com.typesafe" %% "ssl-config-core" % "0.6.1"
+        "org.apache.pekko" % "pekko-stream_2.13" % pekkoVersion
       )
     case _ =>
       throw new Exception("Unsupported scala version")
@@ -101,15 +101,11 @@ val loggingLibs = Def.setting {
   )
 }
 
-val akkaHttpVersion = "10.5.1" //"10.5.0-M1"
-
 // Play WS
 
 def typesafePlayWS(version: String) = Seq(
   "com.typesafe.play" %% "play-ahc-ws-standalone" % version exclude("com.typesafe.play", "play-json"),
   "com.typesafe.play" %% "play-ws-standalone-json" % version exclude("com.typesafe.play", "play-json")
-//  "com.typesafe.play" % "shaded-asynchttpclient" % version,
-//  "io.netty" % "netty-tcnative-boringssl-static" % "2.0.69.Final"
 )
 
 def orgPlayWS(version: String) = Seq(
@@ -120,31 +116,33 @@ def orgPlayWS(version: String) = Seq(
 lazy val playWsDependencies = Def.setting {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, 12)) =>
-      // play json - 2.8.2
       typesafePlayWS("2.1.11")
 
     case Some((2, 13)) =>
-      // play json - 2.10.0
-      typesafePlayWS("2.1.11")
+      orgPlayWS("3.0.10")
 
     case Some((3, 2)) =>
-      // Version "2.2.0-M3" was produced by an unstable release: Scala 3.3.0-RC3 - // play json - 2.10.0-RC6
       typesafePlayWS("2.2.0-M2")
 
     case Some((3, 3)) =>
-      // needs some work because of the akka -> pekko migration (https://pekko.apache.org/docs/pekko/current/project/migration-guides.html)
-      orgPlayWS("3.0.0")
+      orgPlayWS("3.0.10")
 
-    // failover to the latest version
     case _ =>
-      orgPlayWS("3.0.0")
+      orgPlayWS("3.0.10")
+  }
+}
+
+lazy val playJsonDependency = Def.setting {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, 12)) => "com.typesafe.play" %% "play-json" % playJsonVersion.value
+    case _             => "org.playframework" %% "play-json" % playJsonVersion.value
   }
 }
 
 lazy val `ws-client-core` =
   (project in file("ws-client-core")).settings(
     name := "ws-client-core",
-    libraryDependencies += "com.typesafe.play" %% "play-json" % playJsonVersion.value,
+    libraryDependencies += playJsonDependency.value,
     libraryDependencies += "com.typesafe" % "config" % "1.4.3",
     libraryDependencies ++= loggingLibs.value,
     publish / skip := false
@@ -154,7 +152,7 @@ lazy val `ws-client-core-akka` =
   (project in file("ws-client-core-akka"))
     .settings(
       name := "ws-client-core-akka",
-      libraryDependencies ++= akkaStreamLibs.value,
+      libraryDependencies ++= pekkoStreamLibs.value,
       publish / skip := false
     )
     .dependsOn(`ws-client-core`)
@@ -162,7 +160,7 @@ lazy val `ws-client-core-akka` =
 lazy val `json-repair` =
   (project in file("json-repair")).settings(
     name := "json-repair",
-    libraryDependencies += "com.typesafe.play" %% "play-json" % playJsonVersion.value,
+    libraryDependencies += playJsonDependency.value,
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.16",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.16" % Test,
     libraryDependencies ++= loggingLibs.value,
@@ -183,7 +181,7 @@ lazy val `ws-client-play-stream` =
   (project in file("ws-client-play-stream"))
     .settings(
       name := "ws-client-play-stream",
-      libraryDependencies += "com.typesafe.akka" %% "akka-http" % akkaHttpVersion, // JSON WS Streaming
+      libraryDependencies += "org.apache.pekko" %% "pekko-http" % pekkoHttpVersion, // JSON WS Streaming
       publish / skip := false
     )
     .dependsOn(`ws-client-core-akka`, `ws-client-play`)

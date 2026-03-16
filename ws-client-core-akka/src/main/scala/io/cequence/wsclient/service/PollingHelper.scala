@@ -1,7 +1,7 @@
 package io.cequence.wsclient.service
 
-import akka.actor.Scheduler
-import akka.pattern.after
+import org.apache.pekko.actor.Scheduler
+import org.apache.pekko.pattern.after
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
@@ -22,7 +22,7 @@ trait PollingHelper {
       if (isDone(result)) {
         Future.successful(result)
       } else {
-        // Use `akka.pattern.after` to schedule a future that will retry after pollingMs
+        // Use `org.apache.pekko.pattern.after` to schedule a future that will retry after pollingMs
         after(pollingMs.millis, scheduler)(
           pollUntilDone(isDone)(call)
         )
