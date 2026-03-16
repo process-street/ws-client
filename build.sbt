@@ -57,20 +57,6 @@ inThisBuild(
   )
 )
 
-// JSON
-lazy val playJsonVersion = settingKey[String]("Play JSON version to use")
-
-inThisBuild(
-  playJsonVersion := {
-    scalaVersion.value match {
-      case "2.12.18" => "2.8.2"
-      case "2.13.11" => "3.0.4"
-      case "3.2.2"   => "2.10.0-RC6" // -RC6
-      case _         => "3.0.4"
-    }
-  }
-)
-
 // Pekko (migrated from Akka for Play 3.0 compatibility)
 val pekkoVersion = "1.1.5"
 val pekkoHttpVersion = "1.1.0"
@@ -134,8 +120,8 @@ lazy val playWsDependencies = Def.setting {
 
 lazy val playJsonDependency = Def.setting {
   CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((2, 12)) => "com.typesafe.play" %% "play-json" % playJsonVersion.value
-    case _             => "org.playframework" %% "play-json" % playJsonVersion.value
+    case Some((2, 12)) => "com.typesafe.play" %% "play-json" % "2.8.2"
+    case _             => "org.playframework" %% "play-json" % "3.0.6"
   }
 }
 
