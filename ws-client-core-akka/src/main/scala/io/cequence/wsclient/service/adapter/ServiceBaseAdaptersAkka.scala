@@ -1,6 +1,6 @@
 package io.cequence.wsclient.service.adapter
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import io.cequence.wsclient.service.CloseableService
 
 trait ServiceBaseAdaptersAkka[S <: CloseableService] { self: ServiceBaseAdapters[S] =>

@@ -1,7 +1,7 @@
 package io.cequence.wsclient
 
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
+import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.util.ByteString
 import io.cequence.wsclient.domain.{
   CequenceWSException,
   Response,

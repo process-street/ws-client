@@ -1,6 +1,8 @@
 # WS Client (Cequence)
 [![version](https://img.shields.io/badge/version-0.8.0-green.svg)](https://cequence.io) [![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT) [![Twitter Follow](https://img.shields.io/twitter/follow/cequence_io?style=social)](https://twitter.com/0xbnd)
 
+This is a fork of the original ws-client library with Pekko/Play 3.x migration.
+
 This repository contains a simple and efficient Web Service client implemented in Scala. The client is designed to interact with RESTful web services, making it easy to send requests, handle responses, and manage errors.
 
 **🔥 New**: as a part of this suite we provide [json-repair](./json-repair/README.md) library that can be used to fix common JSON syntax errors, repair malformed JSON objects and arrays.

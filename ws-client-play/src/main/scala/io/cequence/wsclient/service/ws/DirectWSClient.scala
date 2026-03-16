@@ -1,6 +1,6 @@
 package io.cequence.wsclient.service.ws
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import io.cequence.wsclient.domain.WsRequestContext
 import io.cequence.wsclient.service.{WSClient, WSClientEngine}
 

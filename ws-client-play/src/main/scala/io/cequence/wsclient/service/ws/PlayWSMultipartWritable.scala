@@ -1,7 +1,7 @@
 package io.cequence.wsclient.service.ws
 
-import akka.stream.scaladsl.{FileIO, Source}
-import akka.util.ByteString
+import org.apache.pekko.stream.scaladsl.{FileIO, Source}
+import org.apache.pekko.util.ByteString
 import play.api.libs.ws.{BodyWritable, SourceBody}
 
 import java.nio.file.Paths
