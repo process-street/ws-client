@@ -11,6 +11,7 @@ ThisBuild / organization := "io.cequence"
 ThisBuild / scalaVersion := scala213
 ThisBuild / version := "0.8.0"
 ThisBuild / isSnapshot := false
+ThisBuild / publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
 ThisBuild / crossScalaVersions := List(scala212, scala213, scala33)
 
 // POM settings for Sonatype
