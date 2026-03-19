@@ -3,7 +3,7 @@ import sbt.Keys.scalaVersion
 // Supported versions
 val scala212 = "2.12.18"
 val scala213 = "2.13.11"
-val scala32 = "3.2.2"
+val scala33 = "3.3.7"
 
 ThisBuild / description := "Generic WebServices library currently only with Play WS impl./backend"
 
@@ -11,7 +11,7 @@ ThisBuild / organization := "io.cequence"
 ThisBuild / scalaVersion := scala213
 ThisBuild / version := "0.8.0"
 ThisBuild / isSnapshot := false
-ThisBuild / crossScalaVersions := List(scala212, scala213, scala32)
+ThisBuild / crossScalaVersions := List(scala212, scala213, scala33)
 
 // POM settings for Sonatype
 ThisBuild / homepage := Some(
@@ -71,9 +71,9 @@ lazy val pekkoStreamLibs = Def.setting {
       Seq(
         "org.apache.pekko" %% "pekko-stream" % pekkoVersion
       )
-    case Some((3, 2)) =>
+    case Some((3, _)) =>
       Seq(
-        "org.apache.pekko" % "pekko-stream_2.13" % pekkoVersion
+        "org.apache.pekko" %% "pekko-stream" % pekkoVersion
       )
     case _ =>
       throw new Exception("Unsupported scala version")
@@ -107,10 +107,7 @@ lazy val playWsDependencies = Def.setting {
     case Some((2, 13)) =>
       orgPlayWS("3.0.10")
 
-    case Some((3, 2)) =>
-      typesafePlayWS("2.2.0-M2")
-
-    case Some((3, 3)) =>
+    case Some((3, _)) =>
       orgPlayWS("3.0.10")
 
     case _ =>
