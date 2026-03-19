@@ -13,6 +13,7 @@ ThisBuild / version := "0.8.0"
 ThisBuild / isSnapshot := false
 ThisBuild / publishConfiguration := publishConfiguration.value.withOverwrite(true)
 ThisBuild / publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
+ThisBuild / publishM2Configuration := publishM2Configuration.value.withOverwrite(true)
 ThisBuild / crossScalaVersions := List(scala212, scala213, scala33)
 
 // POM settings for Sonatype
